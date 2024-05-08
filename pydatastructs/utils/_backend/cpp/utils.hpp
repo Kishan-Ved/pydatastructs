@@ -106,4 +106,78 @@ static int _comp(PyObject* u, PyObject* v, PyObject* tcomp) {
     return result;
 }
 
+// Binary Search Tree node
+typedef struct {
+    PyObject_HEAD
+    int key;
+    PyObject *data;
+    int left;
+    int right;
+    int is_root;
+    int height;
+    int parent;
+    int size;
+} TreeNode;
+
+static PyObject *Treenode___new__(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
+    TreeNode *self;
+    self = (TreeNode *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+        self->data = Py_None;
+        self->left = -1;
+        self->right = -1;
+        self->is_root = 0;
+        self->height = 0;
+        self->parent = -1;
+        self->size = 1;
+        if (!PyArg_ParseTuple(args, "i|O", &self->key, &self->data)) {
+            Py_DECREF(self);
+            return NULL;
+        }
+    }
+    return (PyObject *)self;
+}
+
+static PyObject *
+TreeNode_str(TreeNode *self) {
+    return PyUnicode_FromFormat("(%d, %S, %d, %d)",
+                                self->left, self->key, self->data, self->right);
+}
+
+static PyMethodDef TreeNode_methods[] = {
+    {"__str__", (PyCFunction)TreeNode_str, METH_NOARGS, "Return string representation of the node."},
+    {NULL}  /* Sentinel */
+};
+
+static PyTypeObject TreeNodeType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "treenode.TreeNode",
+    .tp_doc = "TreeNode objects",
+    .tp_basicsize = sizeof(TreeNode),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = Treenode___new__,
+    .tp_str = (reprfunc)TreeNode_str,
+    .tp_methods = TreeNode_methods,
+};
+
+static struct PyModuleDef treenode_module = {
+    PyModuleDef_HEAD_INIT,
+    .m_name = "treenode",
+    .m_doc = "Module that provides TreeNode class",
+    .m_size = -1,
+};
+
+PyMODINIT_FUNC PyInit_treenode(void) {
+    PyObject *m;
+    if (PyType_Ready(&TreeNodeType) < 0)
+        return NULL;
+    m = PyModule_Create(&treenode_module);
+    if (m == NULL)
+        return NULL;
+    Py_INCREF(&TreeNodeType);
+    PyModule_AddObject(m, "TreeNode", (PyObject *)&TreeNodeType);
+    return m;
+}
+
 #endif
