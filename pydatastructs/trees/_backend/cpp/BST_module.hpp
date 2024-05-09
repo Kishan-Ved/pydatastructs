@@ -11,9 +11,27 @@ typedef struct {
     PyObject* data;
     PyObject* left;
     PyObject* right;
+    PyObject* tree;
 } BST;
 
+typedef struct {
+    PyObject_HEAD
+    PyObject* key;
+    PyObject* data;
+    PyObject* left;
+    PyObject* right;
+} TreeNode;
+
 static PyMemberDef BSTMembers[] = {
+    {"key", T_OBJECT_EX, offsetof(BST, key), 0, "key of BST node"},
+    {"data", T_OBJECT_EX, offsetof(BST, data), 0, "data of a BST node"},
+    {"left", T_OBJECT_EX, offsetof(BST, left), 0, "left child"},
+    {"right", T_OBJECT_EX, offsetof(BST, right), 0, "right child"},
+    {"tree", T_OBJECT_EX, offsetof(BST, right), 0, "tree"},
+    {NULL}
+};
+
+static PyMemberDef TreeNodeMembers[] = {
     {"key", T_OBJECT_EX, offsetof(BST, key), 0, "key of BST node"},
     {"data", T_OBJECT_EX, offsetof(BST, data), 0, "data of a BST node"},
     {"left", T_OBJECT_EX, offsetof(BST, left), 0, "left child"},

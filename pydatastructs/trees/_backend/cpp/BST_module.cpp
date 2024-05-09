@@ -1,8 +1,12 @@
 #include "BST_module.hpp"
+#include "pydatastructs/linear_data_structures/_backend/cpp/arrays/DynamicOneDimensionalArray.hpp"
 
 /*
  * constructors/destructors
 */
+
+// TO DO: shift left and right to TreeNode, use BST as obj
+
 static void BSTDealloc(BST* self) {
     if (reinterpret_cast<PyObject*>(self) == Py_None) { // base case
         Py_DECREF(Py_None);
@@ -15,12 +19,50 @@ static void BSTDealloc(BST* self) {
 
     Py_XDECREF(self->key);
     Py_XDECREF(self->data);
+    Py_XDECREF(self->tree);
     Py_TYPE(self)->tp_free(reinterpret_cast<PyObject*>(self));
 
 }
 
+static void TreeNodeDealloc(TreeNode* self) {
+    if (reinterpret_cast<PyObject*>(self) == Py_None) { // base case
+        Py_DECREF(Py_None);
+        return;
+    }
+
+    // post-order traversal to dealloc descentents
+    TreeNodeDealloc(reinterpret_cast<TreeNode*>(self->right));
+    TreeNodeDealloc(reinterpret_cast<TreeNode*>(self->left));
+
+    Py_XDECREF(self->key);
+    Py_XDECREF(self->data);
+    Py_TYPE(self)->tp_free(reinterpret_cast<PyObject*>(self));
+
+}
+
+
 static PyObject* BSTAlloc(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     BST * self = reinterpret_cast<BST*>(type->tp_alloc(type, 0));
+
+    // set all three as None
+    if (self) {
+        Py_INCREF(Py_None);
+        Py_INCREF(Py_None);
+        Py_INCREF(Py_None);
+        Py_INCREF(Py_None);
+        Py_INCREF(Py_None);
+        self->key = Py_None;
+        self->data = Py_None;
+        self->left = Py_None;
+        self->right = Py_None;
+        self->tree = Py_None;
+    }
+
+    return reinterpret_cast<PyObject*>(self);
+}
+
+static PyObject* TreeNodeAlloc(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+    TreeNode * self = reinterpret_cast<TreeNode*>(type->tp_alloc(type, 0));
 
     // set all three as None
     if (self) {
@@ -37,7 +79,54 @@ static PyObject* BSTAlloc(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     return reinterpret_cast<PyObject*>(self);
 }
 
+
 static int BSTInit(BST* self, PyObject *args, PyObject *kwds) {
+    char * kwlist[] = {"key","data", NULL};
+    PyObject* key = NULL;
+    PyObject* data = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OO", kwlist, &key, &data)) {
+        return -1;
+    }
+
+    // If data is none and key is not none, then give an error.
+    if(key==NULL){
+        if(data==NULL){
+            Py_INCREF(Py_None);
+            key=Py_None;
+        }
+        else{
+            PyErr_SetString(PyExc_ValueError, "Key required.");
+            return NULL;
+        }
+    }
+
+    TreeNode * b = reinterpret_cast<TreeNode*>(BSTAlloc(&TreeNodeType, NULL, NULL));
+    PyObject* argument = Py_BuildValue("(OO)", key, data);
+    TreeNodeInit(b, argument, NULL);
+    Py_DECREF(argument);
+
+    self->tree = DynamicOneDimensionalArray(TreeNode,b)
+
+    if (key) {
+        Py_INCREF(key);
+        PyObject* tmp = self->key;
+        self->key = key;
+        Py_XDECREF(tmp);
+    }
+
+    if (data) {
+        Py_INCREF(data);
+        PyObject* tmp = self->data;
+        self->data = data;
+        Py_XDECREF(tmp);
+    }
+
+    return 0;
+
+}
+
+static int TreeNodeInit(TreeNode* self, PyObject *args, PyObject *kwds) {
     char * kwlist[] = {"key","data", NULL};
     PyObject* key = NULL;
     PyObject* data = NULL;
@@ -92,6 +181,24 @@ static PyTypeObject BSTType = {
     (initproc)BSTInit,
     0,
     BSTAlloc
+};
+
+static PyTypeObject TreeNodeType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "TreeNode", // name
+    sizeof(TreeNode), // size
+    0, // itemsize
+    (destructor)TreeNodeDealloc,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    "TreeNode type object",
+    0, 0, 0, 0, 0, 0,
+    TreeNodeMethods,
+    TreeNodeMembers,
+    0,0,0,0,0,0,
+    (initproc)TreeNodeInit,
+    0,
+    TreeNodeAlloc
 };
 
 /**
@@ -224,6 +331,14 @@ static PyModuleDef BSTmodule = {
     PyModuleDef_HEAD_INIT,
     "BST",
     "c extension of BST",
+    -1,
+    NULL, NULL, NULL, NULL, NULL
+};
+
+static PyModuleDef TreeNodemodule = {
+    PyModuleDef_HEAD_INIT,
+    "TreeNode",
+    "c extension of TreeNode",
     -1,
     NULL, NULL, NULL, NULL, NULL
 };
