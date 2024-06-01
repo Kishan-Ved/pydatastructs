@@ -49,10 +49,50 @@ static PyObject* SelfBalancingBinaryTree_delete(SelfBalancingBinaryTree* self, P
     return BinarySearchTree_delete(self->bst, args, kwds);
 }
 
+static PyObject* SelfBalancingBinaryTree_lower_bound(SelfBalancingBinaryTree* self, PyObject *args, PyObject *kwds) {
+    return BinarySearchTree_lower_bound(self->bst, args, kwds);
+}
+
+static PyObject* SelfBalancingBinaryTree_upper_bound(SelfBalancingBinaryTree* self, PyObject *args, PyObject *kwds) {
+    return BinarySearchTree_upper_bound(self->bst, args, kwds);
+}
+
+static PyObject* SelfBalancingBinaryTree__simple_path(SelfBalancingBinaryTree* self, PyObject *args) {
+    return BinarySearchTree__simple_path(self->bst, args);
+}
+
+static PyObject* SelfBalancingBinaryTree__lca_1(SelfBalancingBinaryTree* self, PyObject *args) {
+    return BinarySearchTree__simple_path(self->bst, args);
+}
+
+static PyObject* SelfBalancingBinaryTree__lca_2(SelfBalancingBinaryTree* self, PyObject *args) {
+    return BinarySearchTree__simple_path(self->bst, args);
+}
+
+static PyObject* SelfBalancingBinaryTree_lowest_common_ancestor(SelfBalancingBinaryTree* self, PyObject *args) {
+    return BinarySearchTree_lowest_common_ancestor(self->bst, args);
+}
+
+static PyObject* SelfBalancingBinaryTree_rank(SelfBalancingBinaryTree* self, PyObject *args) {
+    return BinarySearchTree_rank(self->bst, args);
+}
+
+static PyObject* SelfBalancingBinaryTree_select(SelfBalancingBinaryTree* self, PyObject *args) {
+    return BinarySearchTree_select(self->bst, args);
+}
+
 static struct PyMethodDef SelfBalancingBinaryTree_PyMethodDef[] = {
     {"insert", (PyCFunction) SelfBalancingBinaryTree_insert, METH_VARARGS | METH_KEYWORDS, NULL},
     {"delete", (PyCFunction) SelfBalancingBinaryTree_delete, METH_VARARGS | METH_KEYWORDS, NULL},
     {"search", (PyCFunction) SelfBalancingBinaryTree_search, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"lower_bound", (PyCFunction) SelfBalancingBinaryTree_lower_bound, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"upper_bound", (PyCFunction) SelfBalancingBinaryTree_upper_bound, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"_simple_path", (PyCFunction) SelfBalancingBinaryTree__simple_path, METH_VARARGS, NULL},
+    {"_lca_1", (PyCFunction) SelfBalancingBinaryTree__lca_1, METH_VARARGS, NULL},
+    {"_lca_2", (PyCFunction) SelfBalancingBinaryTree__lca_2, METH_VARARGS, NULL},
+    {"lowest_common_ancestor", (PyCFunction) SelfBalancingBinaryTree_lowest_common_ancestor, METH_VARARGS, NULL},
+    {"rank", (PyCFunction) SelfBalancingBinaryTree_rank, METH_VARARGS, NULL},
+    {"select", (PyCFunction) SelfBalancingBinaryTree_select, METH_VARARGS, NULL},
     {NULL}
 };
 
