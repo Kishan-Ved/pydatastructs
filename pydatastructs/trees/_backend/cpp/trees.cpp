@@ -38,7 +38,7 @@ PyMODINIT_FUNC PyInit__trees(void) {
         return NULL;
     }
     Py_INCREF(&SelfBalancingBinaryTreeType);
-    PyModule_AddObject(trees, "BinaryTreeTraversal", reinterpret_cast<PyObject*>(&SelfBalancingBinaryTreeType));
+    PyModule_AddObject(trees, "SelfBalancingBinaryTree", reinterpret_cast<PyObject*>(&SelfBalancingBinaryTreeType));
 
     return trees;
 }

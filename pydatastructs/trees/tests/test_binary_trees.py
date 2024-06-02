@@ -726,3 +726,31 @@ def test_RedBlackTree():
     pre_order = trav.depth_first_search(order='pre_order')
     assert [node.key for node in in_order] == [2, 5, 6, 15, 20]
     assert [node.key for node in pre_order] == [6, 5, 2, 20, 15]
+
+def test_issue_234():
+    """
+    https://github.com/codezonediitj/pydatastructs/issues/234
+    """
+    tree = SelfBalancingBinaryTree(backend=Backend.CPP)
+    tree.insert(5, 5)
+    tree.insert(5.5, 5.5)
+    tree.insert(4.5, 4.5)
+    tree.insert(4.6, 4.6)
+    tree.insert(4.4, 4.4)
+    tree.insert(4.55, 4.55)
+    tree.insert(4.65, 4.65)
+    assert str(tree) == "[(2, 5, 5, 1), (None, 5.5, 5.5, None), (4, 4.5, 4.5, 3), (5, 4.6, 4.6, 6), (None, 4.4, 4.4, None), (None, 4.55, 4.55, None), (None, 4.65, 4.65, None)]"
+    tree._right_rotate(3, 5)
+    assert str(tree) == "[(2, 5, 5, 1), (None, 5.5, 5.5, None), (4, 4.5, 4.5, 5), (None, 4.6, 4.6, 6), (None, 4.4, 4.4, None), (None, 4.55, 4.55, 3), (None, 4.65, 4.65, None)]"
+    # assert tree.tree[3].parent == 5
+    # assert tree.tree[2].right != 3
+    # assert tree.tree[tree.tree[5].parent].right == 5
+
+    trav = BinaryTreeTraversal(tree, backend=Backend.CPP)
+    in_order = trav.depth_first_search(order='in_order')
+    # pre_order = trav.depth_first_search(order='pre_order')
+    # assert [node.key for node in in_order] == [4.4, 4.5, 4.55, 4.6, 4.65, 5, 5.5]
+    # assert [node.key for node in pre_order] == [5, 4.5, 4.4, 4.55, 4.6, 4.65, 5.5]
+
+    # assert tree.tree[tree.tree[3].parent].right == 3
+test_issue_234()

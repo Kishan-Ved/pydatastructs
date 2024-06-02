@@ -5,6 +5,7 @@
 #include <Python.h>
 #include <structmember.h>
 #include <cstdlib>
+#include <iostream>
 #include <stack>
 #include <queue>
 #include <string>
@@ -13,6 +14,7 @@
 #include "../../../linear_data_structures/_backend/cpp/arrays/ArrayForTrees.hpp"
 #include "BinaryTree.hpp"
 #include "BinarySearchTree.hpp"
+#include "SelfBalancingBinaryTree.hpp"
 
 typedef struct {
     PyObject_HEAD
@@ -32,8 +34,14 @@ static PyObject* BinaryTreeTraversal___new__(PyTypeObject* type, PyObject *args,
     if (PyType_Ready(&BinarySearchTreeType) < 0) { // This has to be present to finalize a type object. This should be called on all type objects to finish their initialization.
         return NULL;
     }
+    if (PyType_Ready(&SelfBalancingBinaryTreeType) < 0) { // This has to be present to finalize a type object. This should be called on all type objects to finish their initialization.
+        return NULL;
+    }
     if (PyObject_IsInstance(tree, (PyObject *)&BinarySearchTreeType)) {
         self->tree = reinterpret_cast<BinarySearchTree*>(tree)->binary_tree;
+    }
+    else if (PyObject_IsInstance(tree, (PyObject *)&SelfBalancingBinaryTreeType)) {
+        self->tree = reinterpret_cast<SelfBalancingBinaryTree*>(tree)->bst->binary_tree;
     }
     else {
         PyErr_SetString(PyExc_ValueError, "Not a supported type for BinaryTreeTraversal.");
