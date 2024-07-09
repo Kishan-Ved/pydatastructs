@@ -18,6 +18,8 @@ typedef struct {
     PyObject* parent;
     long size;
     long color;
+    bool isCartesianTreeNode;
+    long priority;
 } TreeNode;
 
 static void TreeNode_dealloc(TreeNode *self) {
@@ -28,9 +30,21 @@ static PyObject* TreeNode___new__(PyTypeObject* type, PyObject *args, PyObject *
     TreeNode *self;
     self = reinterpret_cast<TreeNode*>(type->tp_alloc(type, 0));
 
-    // Assume that arguments are in the order below. Python code is such that this is true.
-    self->key = PyObject_GetItem(args, PyZero);
-    self->data = PyObject_GetItem(args, PyOne);
+    // // Assume that arguments are in the order below. Python code is such that this is true.
+    // self->key = PyObject_GetItem(args, PyZero);
+    // self->data = PyObject_GetItem(args, PyOne);
+    Py_INCREF(Py_None);
+    PyObject* key = Py_None;
+    Py_INCREF(Py_None);
+    PyObject* data = Py_None;
+    Py_INCREF(Py_None);
+    PyObject* flag = Py_None;
+    if (!PyArg_ParseTuple(args, "OO|O", &key, &data, &flag)) { // data is optional
+        return NULL;
+    }
+    self->key = key;
+    self->data = data;
+    self->isCartesianTreeNode = PyLong_AsLong(flag);
 
     Py_INCREF(Py_None);
     self->left = Py_None;
